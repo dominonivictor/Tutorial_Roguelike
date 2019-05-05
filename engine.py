@@ -24,8 +24,8 @@ def main():
     while not tcod.console_is_window_closed():
         tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS, key, mouse)
     
-        tcod.console_set_default_foreground(con, tcod.white)
-        tcod.console_put_char(con, player_x, player_y, '@', tcod.BKGND_NONE)
+        tcod.console_set_default_foreground(con, tcod.orange)
+        tcod.console_put_char(con, player_x, player_y, 'V', tcod.BKGND_NONE)
         tcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
         tcod.console_flush()
         tcod.console_put_char(con, player_x, player_y, ' ', tcod.BKGND_NONE)
