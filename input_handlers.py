@@ -2,8 +2,11 @@ import tcod
 
 
 def handle_keys(key):
+    '''
+    Recieves the pressed key as input and outputs a dictionary 
+    containing the command and its parameters
+    '''
     #Movimentação
-    
     if key.vk == tcod.KEY_UP or key.vk == tcod.KEY_KP8:
         return {'move': (0,-1)}#UP
     elif key.vk == tcod.KEY_DOWN or key.vk == tcod.KEY_KP2:
