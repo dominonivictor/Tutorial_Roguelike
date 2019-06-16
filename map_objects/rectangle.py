@@ -1,9 +1,28 @@
+#import sys 
+#sys.path.append('..')
+from random import randint
+from constants import get_constants
+
+const = get_constants()
+
 class Rect:
-	def __init__(self, x, y, w, h):
+	'''
+	Class that makes any kind of Rectangle in game, makes random size rooms
+	text boxes?, Area of effect spells?, random scenery?
+	'''
+	def __init__(self, typ):
+		#random width and height depending on type
+		w = randint(const[typ+'_min_size'], const[typ+'_max_size'])
+		h = randint(const[typ+'_min_size'], const[typ+'_max_size'])
+		#random position w/out going out of bounds
+		x = randint(0, const['map_width'] - w - 1)
+		y = randint(0, const['map_height'] - h - 1)
+
 		self.x1 = x
 		self.y1 = y
 		self.x2 = x + w
 		self.y2 = y + h
+		self.size = w * h
 
 	def center(self):
 		center_x = int((self.x1 + self.x2)/2)

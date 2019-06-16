@@ -2,6 +2,9 @@ from random import randint
 
 from map_objects.tile import Tile
 from map_objects.rectangle import Rect
+from constants import get_constants
+
+const = get_constants()
 
 class GameMap:
     '''
@@ -17,23 +20,17 @@ class GameMap:
         
         return tiles
 
-    def make_map(self, max_rooms, room_min_size, room_max_size, map_height, map_width, player):
+    def make_map(self, map_height, map_width, player):
         '''
         Creates the whole map
         '''
         rooms = []
         num_rooms = 0
 
-        for r in range(max_rooms):
-            #random width and height
-            w = randint(room_min_size, room_max_size)
-            h = randint(room_min_size, room_max_size)
-            #random position w/out going out of bounds
-            x = randint(0, map_width - w - 1)
-            y = randint(0, map_height - h - 1)
+        for r in range(const['max_rooms']):
 
             #"Rect" class makes it easier to work with
-            new_room = Rect(x, y, w, h)
+            new_room = Rect('room')
 
             #run through the other rooms, and see if they intersect
             for other_room in rooms:
