@@ -10,7 +10,8 @@ def get_constants():
         'max_rooms' : 30,
         'room_min_size' : 6,
         'room_max_size' : 10,
-
+        'cross_min_size' : 2,
+        'cross_max_size' : 5,
     }
 
     return cons

@@ -2,6 +2,7 @@ from random import randint
 
 from map_objects.tile import Tile
 from map_objects.rectangle import Rect
+from map_objects.cross import Cross
 from constants import get_constants
 
 const = get_constants()
@@ -20,7 +21,7 @@ class GameMap:
         
         return tiles
 
-    def make_map(self, map_height, map_width, player):
+    def make_map(self, player):
         '''
         Creates the whole map
         '''
@@ -30,7 +31,7 @@ class GameMap:
         for r in range(const['max_rooms']):
 
             #"Rect" class makes it easier to work with
-            new_room = Rect('room')
+            new_room = Cross('cross')
 
             #run through the other rooms, and see if they intersect
             for other_room in rooms:
@@ -41,15 +42,12 @@ class GameMap:
                 #First "paint" it to the map's tiles
                 self.create_room(new_room)
                 (new_x, new_y) = new_room.center()
-
                 if num_rooms == 0:
                     #This is our first room
                     player.x = new_x
                     player.y = new_y
                 else:
-                    #all rooms after the first
-                    #connect it to the previous room using a tunnerl
-
+                #all rooms after the first, connect it to the previous room using a tunnel
                     #center coordinates from previous room
                     (prev_x, prev_y) = rooms[num_rooms - 1].center()
 
@@ -70,10 +68,23 @@ class GameMap:
         '''
         Takes the room parameter and digs out the space for the room
         '''
-        for x in range(room.x1 + 1, room.x2):
-            for y in range(room.y1 + 1, room.y2):
-                self.tiles[x][y].blocked = False
-                self.tiles[x][y].block_sight = False
+        if(room.typ == 'room'):
+            for x in range(room.x1 + 1, room.x2):
+                for y in range(room.y1 + 1, room.y2):
+                    self.tiles[x][y].blocked = False
+                    self.tiles[x][y].block_sight = False
+
+        elif(room.typ == 'cross'):
+            r=room.r
+            for x in range(room.x1 , room.x2 + 1):
+                for y in range(room.y1 , room.y2 + 1):
+                    rel_x = x - room.x
+                    rel_y = y - room.y
+                    xysum = abs(rel_x) + abs(rel_y)
+                    if (xysum <= r ):#and xysum >= -r): or (xysum >= r and xysum <= -r)
+                        self.tiles[x][y].blocked = False
+                        self.tiles[x][y].block_sight = False
+
 
     def create_h_tunnel(self, x1, x2, y):
         for x in range(min(x1, x2), max(x1, x2) + 1):
