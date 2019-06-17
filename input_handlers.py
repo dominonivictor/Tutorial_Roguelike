@@ -34,8 +34,14 @@ def handle_keys(key):
         return {'move': (-1,-1)}# UP LEFT
 
     #Debug Stuff
-    if key.c == 'd':
+    if key.c == ord('d'):
         return {'debug': True}
+
+    if key.c == ord('r'):
+        return {'remap': True}
+
+    if key.c == ord('g'):
+        return {'god_toggle': True}
 
     #Other keys
     if key.vk == tcod.KEY_ENTER and key.lalt:

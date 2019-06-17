@@ -1,7 +1,7 @@
 from random import randint
-from constants import get_constants
+from constants import get_game_constants
 
-const = get_constants()
+const = get_game_constants()
 
 class Rect:
     '''

@@ -1,13 +1,13 @@
 from random import randint
-from constants import get_constants
+from constants import get_game_constants
 
-const = get_constants()
+const = get_game_constants()
 
 class Cross():
     def __init__(self, typ):
         r = randint(const['cross_min_size'], const['cross_max_size'])
-        x = randint(r, const['map_width'] - r - 1)
-        y = randint(r, const['map_height'] - r - 1)
+        x = randint(r+1, const['map_width'] - r - 2)
+        y = randint(r+1, const['map_height'] - r - 2)
 
         self.x = x
         self.y = y

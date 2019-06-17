@@ -3,9 +3,9 @@ from random import randint
 from map_objects.tile import Tile
 from map_objects.rectangle import Rect
 from map_objects.cross import Cross
-from constants import get_constants
+from constants import get_game_constants
 
-const = get_constants()
+const = get_game_constants()
 
 class GameMap:
     '''
@@ -28,7 +28,7 @@ class GameMap:
         rooms = []
         num_rooms = 0
 
-        for r in range(const['max_rooms']):
+        for r in range(const.get('max_rooms')):
 
             #"Rect" class makes it easier to work with
             if(randint(0,1)==0):
