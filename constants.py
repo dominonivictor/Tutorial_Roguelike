@@ -7,7 +7,7 @@ def get_constants():
         'screen_height' : 50,
         'map_width' : 75,
         'map_height' : 45,
-        'max_rooms' : 30,
+        'max_rooms' : 50,
         'room_min_size' : 6,
         'room_max_size' : 10,
         'cross_min_size' : 2,

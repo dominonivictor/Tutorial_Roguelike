@@ -31,12 +31,17 @@ class GameMap:
         for r in range(const['max_rooms']):
 
             #"Rect" class makes it easier to work with
-            new_room = Cross('cross')
-
+            if(randint(0,1)==0):
+                new_room = Cross('room')
+            else:
+                new_room = Rect('room')
             #run through the other rooms, and see if they intersect
             for other_room in rooms:
                 if new_room.intersect(other_room):
-                    break
+                    if (randint(0,1)==1):#50/50 for joining intersecting rooms
+                        continue
+                    else:
+                        break
             else:
                 #This means no intersections, so we are free to make the room
                 #First "paint" it to the map's tiles
@@ -68,22 +73,10 @@ class GameMap:
         '''
         Takes the room parameter and digs out the space for the room
         '''
-        if(room.typ == 'room'):
-            for x in range(room.x1 + 1, room.x2):
-                for y in range(room.y1 + 1, room.y2):
-                    self.tiles[x][y].blocked = False
-                    self.tiles[x][y].block_sight = False
+        for x, y in room.tiles:        
+            self.tiles[x][y].blocked = False
+            self.tiles[x][y].block_sight = False
 
-        elif(room.typ == 'cross'):
-            r=room.r
-            for x in range(room.x1 , room.x2 + 1):
-                for y in range(room.y1 , room.y2 + 1):
-                    rel_x = x - room.x
-                    rel_y = y - room.y
-                    xysum = abs(rel_x) + abs(rel_y)
-                    if (xysum <= r ):#and xysum >= -r): or (xysum >= r and xysum <= -r)
-                        self.tiles[x][y].blocked = False
-                        self.tiles[x][y].block_sight = False
 
 
     def create_h_tunnel(self, x1, x2, y):

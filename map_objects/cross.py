@@ -21,6 +21,7 @@ class Cross():
 
         self.size = 1 + 4*r
         self.typ = typ
+        self.tiles = self.tiles_xy()
 
     def center(self):
         return (self.x, self.y)
@@ -32,4 +33,14 @@ class Cross():
         return (self.x1 <= other.x2 and self.x2 >= other.x1 and
                 self.y1 <= other.y2 and self.y2 >= other.y1)        
 
-    
+    def tiles_xy(self):
+        tiles = []
+        for x in range(self.x1 , self.x2 + 1):
+                for y in range(self.y1 , self.y2 + 1):
+                    rel_x = x - self.x
+                    rel_y = y - self.y
+                    xysum = abs(rel_x) + abs(rel_y)
+                    if (xysum <= self.r ):    
+                        tiles.append((x, y))
+
+        return tiles

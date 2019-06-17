@@ -1,5 +1,13 @@
 import tcod
 
+'''
+can I use dis?
+holiday = {'Winter': 'Christmas',
+           'Spring': 'Easter',
+           'Summer': 'American Independence Day',
+           'Fall':   'Halloween'}.get(season, 'Personal day off')
+'''
+
 
 def handle_keys(key):
     '''
@@ -24,7 +32,12 @@ def handle_keys(key):
         return {'move': (-1,1)}# DOWN LEFT
     elif key.vk == tcod.KEY_KP7:
         return {'move': (-1,-1)}# UP LEFT
-    
+
+    #Debug Stuff
+    if key.c == 'd':
+        return {'debug': True}
+
+    #Other keys
     if key.vk == tcod.KEY_ENTER and key.lalt:
         # Alt+Enter: toggle full screen
         return {'fullscreen': True}
