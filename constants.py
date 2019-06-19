@@ -7,16 +7,31 @@ def get_game_constants():
         'screen_height' : 50,
         'map_width' : 75,
         'map_height' : 45,
-        'max_rooms' : 50,
-        'room_min_size' : 6,
-        'room_max_size' : 10,
-        'cross_min_size' : 2,
-        'cross_max_size' : 5,
         'fov_algorithm' : 0,
         'fov_light_walls' : True,
-        'fov_radius' : 10
-        
-    
+        'fov_radius' : 10,
+            
+    }
+
+    return cons
+
+def get_room_constants():
+
+    cons = {
+        'max_rooms' : 30, 
+        'max_monsters_per_room' : 10,  
+        'rect_min_size' : 2,
+        'rect_max_size' : 6,
+        'cross_min_size' : 2,
+        'cross_max_size' : 6,
+        'ellipse_min_size' : 2,
+        'ellipse_max_size' : 8,
+        #****************************************************
+        #A little repetitive, but I'll work something better
+        #DONT FORGET THIS SHIT, OR LEARN TO JOIN DICTS
+        #****************************************************
+        'map_width' : 75,
+        'map_height' : 45,
     }
 
     return cons
@@ -30,20 +45,9 @@ def get_colors():
         'light_wall' : tcod.Color(130, 110, 50),
         'light_ground' : tcod.Color(200, 180, 50),
         'black' : tcod.Color(0, 0, 0),
+        'orc' : tcod.desaturated_green,
+        'troll' : tcod.darker_green,
 
     }
 
     return colors
-
-#Actually this is in the wrong place, it should be somewhere u can toggle
-#ergo it is no a constant, but for now we'll temporarily work like this
-'''
-def get_god_constants():
-
-    cons = {
-        'god_sight' : True
-
-    }
-
-    return cons
-'''

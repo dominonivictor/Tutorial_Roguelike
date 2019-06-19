@@ -1,13 +1,16 @@
 import tcod
+from constants import get_game_constants, get_colors
 
+const = get_game_constants()
+colors = get_colors()
 
-def render_all(god, con, entities, game_map, fov_map, fov_recompute, screen_width, screen_height, colors):
+def render_all(god, con, entities, game_map, fov_map, fov_recompute):
     ''' 
     Draw all the tiles and entities in the game map, taking the console, all entities, game_map, screen vars and colors as input
     '''
     if fov_recompute:
-        for y in range(game_map.height):
-            for x in range(game_map.width):
+        for y in range(const.get('map_height')):
+            for x in range(const.get('map_width')):
                 visible = tcod.map_is_in_fov(fov_map, x, y)
                 wall = game_map.tiles[x][y].block_sight
 
@@ -31,7 +34,7 @@ def render_all(god, con, entities, game_map, fov_map, fov_recompute, screen_widt
     for entity in entities:
         draw_entity(god, con, entity, fov_map)
 
-    tcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
+    tcod.console_blit(con, 0, 0, const.get('screen_width'), const.get('screen_height'), 0, 0, 0)
 
 def clear_all(con, entities):
     for entity in entities:
