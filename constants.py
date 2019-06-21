@@ -19,17 +19,19 @@ def get_room_constants():
 
     cons = {
         'max_rooms' : 30, 
-        'max_monsters_per_room' : 10,  
+        'max_monsters_per_room' : 4,  
         'rect_min_size' : 2,
         'rect_max_size' : 6,
         'cross_min_size' : 2,
         'cross_max_size' : 6,
         'ellipse_min_size' : 2,
         'ellipse_max_size' : 8,
+
         #****************************************************
         #A little repetitive, but I'll work something better
         #DONT FORGET THIS SHIT, OR LEARN TO JOIN DICTS
         #****************************************************
+
         'map_width' : 75,
         'map_height' : 45,
     }

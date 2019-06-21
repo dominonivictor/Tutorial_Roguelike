@@ -1,19 +1,13 @@
 import tcod
 
-'''
-can I use dis?
-holiday = {'Winter': 'Christmas',
-           'Spring': 'Easter',
-           'Summer': 'American Independence Day',
-           'Fall':   'Halloween'}.get(season, 'Personal day off')
-'''
-
 
 def handle_keys(key):
     '''
     Recieves the pressed key as input and outputs a dictionary 
     containing the command and its parameters
     '''
+    key_char = chr(key.c)
+
     #Movimentação
     if key.vk == tcod.KEY_UP or key.vk == tcod.KEY_KP8:
         return {'move': (0,-1)}#UP
@@ -33,14 +27,20 @@ def handle_keys(key):
     elif key.vk == tcod.KEY_KP7:
         return {'move': (-1,-1)}# UP LEFT
 
+    if key_char is 'f':
+        return {'fire': True}
+
     #Debug Stuff
-    if key.c == ord('d'):
+    if key_char == 'd':
         return {'debug': True}
 
-    if key.c == ord('r'):
+    if key_char == 'b':
+        return {'break': True}
+
+    if key_char == 'r':
         return {'remap': True}
 
-    if key.c == ord('g'):
+    if key_char == 'g':
         return {'god_toggle': True}
 
     #Other keys

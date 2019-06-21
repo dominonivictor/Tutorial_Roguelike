@@ -3,7 +3,9 @@ from map_objects.tile import Tile
 from map_objects.shapes import Rect, Cross, Ellipse
 from constants import get_room_constants, get_colors
 from entity import Entity
-
+from components.actor import Actor
+from components.ai import BasicCreature
+from render_functions import RenderOrder
 
 const = get_room_constants()
 colors = get_colors()
@@ -31,7 +33,8 @@ class GameMap:
 
     def make_map(self, player, entities, debug_map=False):
         '''
-        Creates the whole map, first placing rooms, then connecting them
+        Creates the whole map, first placing rooms, then connecting them, as well as 
+        calling place_entities to put them inside these rooms
         '''
         #seed(0)
         if debug_map:
@@ -44,7 +47,7 @@ class GameMap:
             intersecc = False
 
             for r in range(const.get('max_rooms')):
-                #"Rect" class makes it easier to work with
+                #Chooses a number from 0-6 to randomize room shapes
                 num = randint(0,6)
                 if(num==0):
                     new_room = Rect()
@@ -52,6 +55,7 @@ class GameMap:
                     new_room = Cross()
                 else:
                     new_room = Ellipse()
+
                 #run through the other rooms, and see if they intersect
                 for other_room in rooms:
                     if new_room.intersect(other_room):
@@ -90,7 +94,7 @@ class GameMap:
 
     def create_room(self, room):
         '''
-        Takes the room parameter and digs out the space for the room
+        Takes the tiles parameter in room and digs out the space for the room
         '''
         for x, y in room.tiles:        
             self.tiles[x][y].blocked = False
@@ -110,11 +114,12 @@ class GameMap:
 
     def place_entities(self, room, entities):
         '''
-            Takes a room and the list of entities and puts monsters inside the room
+            Takes a room and the list of entities and puts creatures inside the room
             where there isn't any other entity at that square. Since it is here were
-            the monster gen is, i'll either build upon the stuff here or migrate elsewher
+            the creature gen is, i'll either build upon the stuff here or migrate elsewher
             to make it more sofisticated, making specific "mobs" for diferent regions
             and different items placed depending on stuff
+            Not only placing "mobs" but also scenery stuff, flora, details and stuff
         '''
         num_monsters = randint(0, const['max_monsters_per_room'])
 
@@ -126,11 +131,19 @@ class GameMap:
 
             if not any([entity for entity in entities if entity.x == x and entity.y == y]):
                 if randint(0, 100) < 80:
-                    monster = Entity(x, y, 'o', colors['orc'], 'Orc', blocks=True)
-                else:
-                    monster = Entity(x, y, 'T', colors['troll'], 'Troll', blocks=True)
+                    #Generating our Creatures
+                    actor_comp = Actor(mental=4, physical=10, spiritual=4)
+                    ai_comp = BasicCreature()
 
-                entities.append(monster)
+                    creature = Entity(x, y, 'o', colors['orc'], 'Orc', blocks=True, 
+                        render_order=RenderOrder.ACTOR, actor=actor_comp, ai=ai_comp)
+                else:
+                    actor_comp = Actor(mental=6, physical=12, spiritual=6)
+                    ai_comp = BasicCreature()
+                    creature = Entity(x, y, 'T', colors['troll'], 'Troll', blocks=True,
+                        render_order=RenderOrder.ACTOR, actor=actor_comp, ai=ai_comp)
+
+                entities.append(creature)
 
     def is_blocked(self, x, y):
         if self.tiles[x][y].blocked:
