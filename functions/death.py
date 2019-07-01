@@ -1,7 +1,7 @@
 import tcod
 
 from game_states import GameStates
-from render_functions import RenderOrder
+from functions.render import RenderOrder
 
 def kill_player(player):
     player.char = '%'

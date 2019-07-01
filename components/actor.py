@@ -5,7 +5,7 @@ class Actor:
     '''
     def __init__(self, mental, physical, spiritual):
         '''
-        Each contributes to 1 or 2 basic atributes and lower another
+        Each parameter/aspect contributes to 1 or 2 basic stat and lowers another
         '''
         hp = int(mental*0.5) + int(physical*1.2) + int(spiritual*0.9)
         self.max_hp = int(mental*0.5) + int(physical*1.2) + int(spiritual*0.9)

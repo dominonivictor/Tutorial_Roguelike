@@ -30,8 +30,12 @@ def get_entities_in_fov(fov_map, entities):
     #I have a duplicate function in render functions, delete this or that one!!!!!!!
     #**********************************************************************************
     results = []
+    #This excludes the player (the first item in the list entities) from the search
+    entities = entities[1:]
     for entity in entities:
-        if tcod.map_is_in_fov(fov_map, entity.x, entity.y):
-            results.append(entity)
+        if entity.actor:
+        #only returns entities with the actor component, things are getting very tricky
+            if tcod.map_is_in_fov(fov_map, entity.x, entity.y):
+                results.append(entity)
 
     return results

@@ -27,7 +27,7 @@ def handle_keys(key):
     elif key.vk == tcod.KEY_KP7:
         return {'move': (-1,-1)}# UP LEFT
 
-    if key_char is 'f':
+    if key_char == 'f':
         return {'fire': True}
 
     #Debug Stuff
@@ -35,7 +35,7 @@ def handle_keys(key):
         return {'debug': True}
 
     if key_char == 'b':
-        return {'break': True}
+        return {'break_wall': True}
 
     if key_char == 'r':
         return {'remap': True}

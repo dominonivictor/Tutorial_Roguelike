@@ -47,9 +47,21 @@ def get_colors():
         'light_wall' : tcod.Color(130, 110, 50),
         'light_ground' : tcod.Color(200, 180, 50),
         'black' : tcod.Color(0, 0, 0),
+
+        #CREAtURES
         'orc' : tcod.desaturated_green,
         'troll' : tcod.darker_green,
+        'fox' : tcod.orange,
 
     }
 
     return colors
+
+def get_creatures_stats():
+
+    stats = {
+        'fox':{'hp':20},
+
+    }
+
+    return stats

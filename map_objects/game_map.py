@@ -5,7 +5,7 @@ from constants import get_room_constants, get_colors
 from entity import Entity
 from components.actor import Actor
 from components.ai import BasicCreature
-from render_functions import RenderOrder
+from functions.render import RenderOrder
 
 const = get_room_constants()
 colors = get_colors()

@@ -51,7 +51,7 @@ def render_all(god, con, entities, player, game_map, fov_map, fov_recompute):
 
     WoA, printing on screen is so very satisfiying, and such an important part of the whole game, need to study this carefully and diligently
     '''
-    tcod.console_print_ex(con, 5 , 2, tcod.BKGND_NONE, tcod.LEFT,
+    tcod.console_print_ex(con, 5 , const['screen_height']- 4, tcod.BKGND_NONE, tcod.LEFT,
                             'HP: {0:02}/{1:02}\nName: {2}\nMen: {3}, Phy: {4}, Spi: {5}\nAtk: {6}, Def: {7}, Spd: {8}'.format(
                             player.actor.hp, player.actor.max_hp, player.name, player.actor.mental, player.actor.physical, player.actor.spiritual,
                             player.actor.atk_stat, player.actor.def_stat, player.actor.spd_stat))
@@ -83,3 +83,9 @@ def entity_in_fov(god, entity, fov_map):
 def clear_entity(con, entity):
     # erase the character that represents this object
     tcod.console_put_char(con, entity.x, entity.y, ' ', tcod.BKGND_NONE)
+
+def draw_text():
+    tcod.console_print_ex(con, 5 , const['map_height']- 8, tcod.BKGND_NONE, tcod.LEFT,
+                            'HP: {0:02}/{1:02}\nName: {2}\nMen: {3}, Phy: {4}, Spi: {5}\nAtk: {6}, Def: {7}, Spd: {8}'.format(
+                            player.actor.hp, player.actor.max_hp, player.name, player.actor.mental, player.actor.physical, player.actor.spiritual,
+                            player.actor.atk_stat, player.actor.def_stat, player.actor.spd_stat))
