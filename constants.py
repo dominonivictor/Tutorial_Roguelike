@@ -3,15 +3,26 @@ import tcod
 def get_game_constants():
 
     cons = {
+        #SCREEN
         'screen_width' : 80,
         'screen_height' : 50,
-        'map_width' : 75,
-        'map_height' : 45,
+        #MAP
+        'map_width' : 80,
+        'map_height' : 43,
+        #FOV
         'fov_algorithm' : 0,
         'fov_light_walls' : True,
         'fov_radius' : 10,
-            
+        #PANEL
+        'bar_width': 20,
+        'panel_height': 7,
+
     }
+    cons['panel_y'] = cons['screen_height'] - cons['panel_height']
+    #MESSAGES
+    cons['message_x'] = cons['bar_width'] + 2
+    cons['message_width'] = cons['screen_width'] - cons['bar_width'] - 2
+    cons['message_height'] = cons['panel_height'] - 1
 
     return cons
 
@@ -21,19 +32,19 @@ def get_room_constants():
         'max_rooms' : 30, 
         'max_monsters_per_room' : 4,  
         'rect_min_size' : 2,
-        'rect_max_size' : 6,
+        'rect_max_size' : 4,
         'cross_min_size' : 2,
-        'cross_max_size' : 6,
+        'cross_max_size' : 5,
         'ellipse_min_size' : 2,
-        'ellipse_max_size' : 8,
+        'ellipse_max_size' : 6,
 
         #****************************************************
         #A little repetitive, but I'll work something better
         #DONT FORGET THIS SHIT, OR LEARN TO JOIN DICTS
         #****************************************************
 
-        'map_width' : 75,
-        'map_height' : 45,
+        'map_width' : 80,
+        'map_height' : 43,
     }
 
     return cons
@@ -57,10 +68,10 @@ def get_colors():
 
     return colors
 
-def get_creatures_stats():
+def get_actors_stats():
 
     stats = {
-        'fox':{'hp':20},
+        'player':{'spiritual':5, 'mental': 5, 'physical': 5}
 
     }
 

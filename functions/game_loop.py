@@ -1,6 +1,6 @@
 import tcod
 
-from constants import get_game_constants
+from constants import get_game_constants, get_actor_stats
 from game_states import GameStates
 from god import God
 from input_handlers import handle_keys
@@ -10,11 +10,11 @@ from map_objects.game_map import GameMap
 from functions.fov import initialize_fov, recompute_fov, set_tile_fov, get_entities_in_fov
 from functions.death import kill_player, kill_creature 
 from functions.render import RenderOrder
- 
+from interface.game_messages import MessageLog
 
 
 const = get_game_constants()
-
+pstats = get_actor_stats()['player']
 '''
     make a game object to handle the stuff?? use to save important data?
 '''
@@ -45,7 +45,7 @@ def initialize_objs_vars():
     Important VARS: game_state, fov_map, key, mouse
     '''
     # OBJECTS
-    actor_comp = Actor(mental=10, physical=5, spiritual=7)
+    actor_comp = Actor(mental=pstats['mental'], physical=pstats['physical'], spiritual=pstats['spiritual'])
     player = Entity(0, 0, '@', tcod.white, 'Hero', blocks=True, render_order=RenderOrder.ACTOR, actor=actor_comp)
     entities = [player]
     god = God()
@@ -58,4 +58,7 @@ def initialize_objs_vars():
     key = tcod.Key()
     mouse = tcod.Mouse()
 
-    return player, entities, god, game_map, game_state, fov_map, key, mouse
+    #Message related stuff, in a near future, separate into combat, qests, chat, etc
+    msg_log = MessageLog(const['message_x'], const['message_width'], const['message_height'])
+
+    return player, entities, god, game_map, game_state, fov_map, msg_log, key, mouse

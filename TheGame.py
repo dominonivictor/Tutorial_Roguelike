@@ -29,7 +29,7 @@ class TheGame:
 
         self.the_bug, self.fov_recompute = initialize_flags()
 
-        self.player, self.entities, self.god, self.game_map, self.game_state, self.fov_map, self.key, self.mouse = initialize_objs_vars()
+        self.player, self.entities, self.god, self.game_map, self.game_state, self.fov_map, self.msg_log, self.key, self.mouse = initialize_objs_vars()
 
     def check_event(self):
         '''
@@ -106,7 +106,7 @@ class TheGame:
                         dead_entity = enemy_result.get('dead')
 
                         if message:
-                            print(message)
+                            self.msg_log.add_msg(message)
 
                         if dead_entity:
                             if dead_entity == self.player:
@@ -114,7 +114,7 @@ class TheGame:
                             else:
                                 message = kill_creature(dead_entity)
 
-                            print(message)
+                            self.msg_log.add_msg(message)
 
                             if self.game_state == GameStates.PLAYER_DEAD:
                                 break

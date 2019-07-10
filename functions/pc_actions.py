@@ -60,7 +60,7 @@ def move_action(the_game, move):
         dead_entity = player_result.get('dead')
 
         if message:
-            print(message)
+            the_game.msg_log.add_msg(message)
 
         if dead_entity:
             if dead_entity == the_game.player:
@@ -68,7 +68,7 @@ def move_action(the_game, move):
             else:
                 message = kill_creature(dead_entity)
 
-            print(message)
+            the_game.msg_log.add_msg(message)
 
 def fire_action(the_game):
     '''
@@ -86,7 +86,7 @@ def fire_action(the_game):
             dead_entity = result.get('dead')
 
             if message:
-                print(message)
+                the_game.msg_log.add_msg(message)
 
             if dead_entity:
                 if dead_entity == the_game.player:
@@ -94,10 +94,10 @@ def fire_action(the_game):
                 else:
                     message = kill_creature(dead_entity)
 
-                print(message)
+                the_game.msg_log.add_msg(message)
     else:
         message = "There are no targets in range"
-        print(message)
+        the_game.msg_log.add_msg(message)
 
 '''################################################################################################################################
 
@@ -114,8 +114,7 @@ def remap_action(the_game):
 
 
 def debug_action(the_game):
-    self.the_bug = False if self.the_bug else True
-    print("X: ", self.player.x, "Y: ", self.player.y )      
+    the_game.the_bug = not the_game.the_bug      
 
 def god_toggle_action(the_game):
     the_game.god.toggle()

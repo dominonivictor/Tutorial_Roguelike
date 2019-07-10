@@ -1,3 +1,6 @@
+import tcod
+from interface.game_messages import Message
+
 
 class Actor:
     '''
@@ -32,12 +35,12 @@ class Actor:
 
         dmg = self.atk_stat - target.actor.def_stat
 
+        name = self.owner.name.capitalize()
+
         if dmg > 0:
-            results.append({'message': '{} attacks {} for {} hit points.'.format(
-                self.owner.name.capitalize(), target.name, str(dmg))})
+            results.append({'message': Message(f'{name} attacks {target.name} for {str(dmg)} hit points.', tcod.white)})
             results.extend(target.actor.take_dmg(dmg))
         else:
-            results.append({'message': '{} attacks {} but deals no damage.'.format(
-                self.owner.name.capitalize(), target.name )})
+            results.append({'message': Message(f'{name} attacks {target.name} but deals no damage.', tcod.white)})
 
         return results

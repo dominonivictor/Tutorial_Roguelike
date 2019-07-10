@@ -10,7 +10,21 @@ class RenderOrder(Enum):
     ITEM = 2
     ACTOR = 3
 
-def render_all(god, con, entities, player, game_map, fov_map, fov_recompute):
+def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_color):
+    bar_width = int(float(value)/maximum*total_width)
+
+    tcod.console_set_default_background(panel, back_color)
+    tcod.console_rect(panel, x, y, total_width, 1, False, tcod.BKGND_SCREEN)
+
+    tcod.console_set_default_background(panel, bar_color)
+    if bar_width > 0:
+        tcod.console_rect(panel, x, y, bar_width, 1, False, tcod.BKGND_SCREEN)
+
+    tcod.console_set_default_foreground(panel, tcod.white)
+    tcod.console_print_ex(panel, int(x + total_width/2), y, tcod.BKGND_NONE, tcod.CENTER, 
+                        f'{name}: {value}/{maximum}')
+
+def render_all(god, con, panel, entities, player, game_map, fov_map, fov_recompute, msg_log):
     ''' 
     Draw all the tiles and entities in the game map, taking the console, all entities, game_map, screen vars and colors as input
     Starting to draw stats on the screen! Think carefully about this and change stuff acordingly, probably move the UI part into another file
@@ -43,21 +57,24 @@ def render_all(god, con, entities, player, game_map, fov_map, fov_recompute):
     for entity in entities_in_render_order:
         draw_entity(god, con, entity, fov_map)
 
-    tcod.console_set_default_foreground(con, tcod.white)
-    '''
-    This is the way that was taught by the Tutorial:
-    tcod.console_print_ex(con, 1, const.get('screen_height') - 2, tcod.BKGND_NONE, tcod.LEFT,
-                            'HP: {0:02}/{1:02}'.format(player.actor.hp, player.actor.max_hp))
-
-    WoA, printing on screen is so very satisfiying, and such an important part of the whole game, need to study this carefully and diligently
-    '''
-    tcod.console_print_ex(con, 5 , const['screen_height']- 4, tcod.BKGND_NONE, tcod.LEFT,
-                            'HP: {0:02}/{1:02}\nName: {2}\nMen: {3}, Phy: {4}, Spi: {5}\nAtk: {6}, Def: {7}, Spd: {8}'.format(
-                            player.actor.hp, player.actor.max_hp, player.name, player.actor.mental, player.actor.physical, player.actor.spiritual,
-                            player.actor.atk_stat, player.actor.def_stat, player.actor.spd_stat))
-
-
     tcod.console_blit(con, 0, 0, const.get('screen_width'), const.get('screen_height'), 0, 0, 0)
+
+    tcod.console_set_default_background(panel, tcod.black)
+    tcod.console_clear(panel)
+
+    #print the game msgs, one line at a time
+    y = 1
+    for msg in msg_log.msgs:
+        tcod.console_set_default_foreground(panel, msg.color)
+        tcod.console_print_ex(panel, msg_log.x, y, tcod.BKGND_NONE, tcod.LEFT, msg.text)
+
+    render_bar(panel, 1, 1, const['bar_width'], 'HP', player.actor.hp, player.actor.max_hp, 
+                tcod.light_red, tcod.darker_red)
+
+    
+    tcod.console_blit(panel, 0, 0, const['screen_width'], const['panel_height'], 0, 0, const['panel_y'])
+
+
 
 def clear_all(con, entities):
     for entity in entities:

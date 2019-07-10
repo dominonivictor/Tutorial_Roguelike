@@ -123,20 +123,11 @@ class Cross(Shape):
 
         return tiles
 
-        '''
-        for(int y=-height; y<=height; y++) {
-            for(int x=-width; x<=width; x++) {
-                if(x*x*height*height+y*y*width*width <= height*height*width*width)
-                    setpixel(origin.x+x, origin.y+y);
-    }
-}'''
-
 '''
 *******************************************************************
         ELLIPSE     ELLIPSE     ELLIPSE     ELLIPSE     ELLIPSE     
 *******************************************************************
 '''
-
 
 class Ellipse(Shape):
 
