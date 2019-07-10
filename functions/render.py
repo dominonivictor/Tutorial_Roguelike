@@ -67,12 +67,10 @@ def render_all(god, con, panel, entities, player, game_map, fov_map, fov_recompu
     for entity in entities_in_render_order:
         draw_entity(god, con, entity, fov_map)
 
-    tcod.console_set_default_foreground(con, tcod.white) 
+    tcod.console_blit(con, 0, 0, const['screen_width'], const['screen_height'], 0, 0, const['panel_height'])
 
     tcod.console_set_default_background(panel, tcod.black)
     tcod.console_clear(panel)
-
-    tcod.console_blit(con, 0, 0, const['screen_width'], const['screen_height'], 0, 0, 0)
 
     #print the game msgs, one line at a time
     y = 1
@@ -81,16 +79,17 @@ def render_all(god, con, panel, entities, player, game_map, fov_map, fov_recompu
         tcod.console_print_ex(panel, msg_log.x, y, tcod.BKGND_NONE, tcod.LEFT, msg.text)
         y+=1
 
-
-
     render_bar(panel, 1, 1, const['bar_width'], 'HP', player.actor.hp, player.actor.max_hp, 
                 tcod.light_red, tcod.darker_red)  
+
 
     tcod.console_set_default_foreground(panel, tcod.light_gray)
     tcod.console_print_ex(panel, 1, 0, tcod.BKGND_NONE, tcod.LEFT,
                             get_names_under_mouse(mouse, entities, fov_map))
-    
-    tcod.console_blit(panel, 0, 0, const['screen_width'], const['panel_height'], 0, 0, const['panel_y'])
+  
+
+    tcod.console_blit(panel, 0, 0, const['screen_width'], const['panel_height'], 0, 0, 0)
+    #tcod.console_set_default_foreground(con, tcod.white)
 
 
 

@@ -2,7 +2,7 @@ import tcod
 
 def get_game_constants():
 
-    cons = {
+    const = {
         #SCREEN
         'screen_width' : 80,
         'screen_height' : 50,
@@ -18,17 +18,17 @@ def get_game_constants():
         'panel_height': 7,
 
     }
-    cons['panel_y'] = cons['screen_height'] - cons['panel_height']
+    const['panel_y'] = const['screen_height'] - const['panel_height']
     #MESSAGES
-    cons['message_x'] = cons['bar_width'] + 2
-    cons['message_width'] = cons['screen_width'] - cons['bar_width'] - 2
-    cons['message_height'] = cons['panel_height'] - 1
+    const['message_x'] = const['bar_width'] + 2
+    const['message_width'] = const['screen_width'] - const['bar_width'] - 2
+    const['message_height'] = const['panel_height'] - 1
 
-    return cons
+    return const
 
 def get_room_constants():
 
-    cons = {
+    const = {
         'max_rooms' : 30, 
         'max_monsters_per_room' : 4,  
         'rect_min_size' : 2,
@@ -47,7 +47,7 @@ def get_room_constants():
         'map_height' : 43,
     }
 
-    return cons
+    return const
 
 def get_colors():
 

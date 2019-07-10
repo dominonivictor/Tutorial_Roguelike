@@ -1,6 +1,6 @@
 import tcod
 from TheGame import TheGame
-from interface.console import Console, Panel
+from interface.console import Console, Panel, render_console
 
 '''
 I can clean this up even further! :) maybe with one single func
@@ -10,13 +10,13 @@ def main():
 
     the_game = TheGame()
     con = Console()
-    panel = Panel()
+    pan = Panel()
    
     while not tcod.console_is_window_closed():
 
         the_game.check_event()
 
-        con.render_console(panel, the_game.god, the_game.player, the_game.entities, 
+        render_console(con.console, pan.panel, the_game.god, the_game.player, the_game.entities, 
                     the_game.game_map, the_game.fov_map, the_game.fov_recompute,
                     the_game.msg_log, the_game.mouse)
 
