@@ -27,7 +27,7 @@ def set_tile_fov(x, y, game_map, fov_map):
 
 def get_entities_in_fov(fov_map, entities):
     #**********************************************************************************
-    #I have a duplicate function in render functions, delete this or that one!!!!!!!
+    #I have a similar function in render functions, delete this or that one!!!!!!!
     #**********************************************************************************
     results = []
     #This excludes the player (the first item in the list entities) from the search

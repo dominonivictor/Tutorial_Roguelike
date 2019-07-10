@@ -17,7 +17,7 @@ class MessageLog:
 
     def add_msg(self, msg):
         #Split msg over multi lines if necessary
-        new_msg_lines = textwrap.wrap(msg.text, self. width)
+        new_msg_lines = textwrap.wrap(msg.text, self.width)
 
         for line in new_msg_lines:
             #If buffer full, rm 1st line for a new one

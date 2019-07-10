@@ -1,6 +1,6 @@
 import tcod
 
-from constants import get_game_constants, get_actor_stats
+from constants import get_game_constants, get_actors_stats
 from game_states import GameStates
 from god import God
 from input_handlers import handle_keys
@@ -14,7 +14,7 @@ from interface.game_messages import MessageLog
 
 
 const = get_game_constants()
-pstats = get_actor_stats()['player']
+pstats = get_actors_stats()['player']
 '''
     make a game object to handle the stuff?? use to save important data?
 '''

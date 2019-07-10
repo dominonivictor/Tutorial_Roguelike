@@ -20,8 +20,8 @@ class Console:
 
         return con
 
-    def render_console(self, panel, god, player, entities, game_map, fov_map, fov_recompute, msg_log):
-        render_all(god, self.console, panel, entities, player, game_map, fov_map, fov_recompute, msg_log)
+    def render_console(self, panel, god, player, entities, game_map, fov_map, fov_recompute, msg_log, mouse):
+        render_all(god, self.console, panel, entities, player, game_map, fov_map, fov_recompute, msg_log, mouse)
 
         tcod.console_flush()
 

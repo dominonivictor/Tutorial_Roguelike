@@ -36,7 +36,7 @@ class TheGame:
         Is this if self.fov_recompute in the right place? I think it is a little lost in this func specifically
         maybe move it with the render func
         '''
-        tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS, self.key, self.mouse)
+        tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, self.key, self.mouse)
         if self.fov_recompute:
             recompute_fov(self.fov_map, self.player.x, self.player.y, 
                 self.fov_radius, self.fov_light_walls, self.fov_algorithm)

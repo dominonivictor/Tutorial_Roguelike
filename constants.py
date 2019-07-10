@@ -71,7 +71,7 @@ def get_colors():
 def get_actors_stats():
 
     stats = {
-        'player':{'spiritual':5, 'mental': 5, 'physical': 5}
+        'player':{'spiritual':10, 'mental': 10, 'physical': 10}
 
     }
 

@@ -10,6 +10,16 @@ class RenderOrder(Enum):
     ITEM = 2
     ACTOR = 3
 
+def get_names_under_mouse(mouse, entities, fov_map):
+    (x, y) = (mouse.cx, mouse.cy)
+
+    names = [entity.name for entity in entities
+                if entity.x == x and entity.y == y and tcod.map_is_in_fov(fov_map, entity.x, entity.y)]
+    names = ', '.join(names)
+
+    return names.capitalize()
+
+
 def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_color):
     bar_width = int(float(value)/maximum*total_width)
 
@@ -24,7 +34,7 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
     tcod.console_print_ex(panel, int(x + total_width/2), y, tcod.BKGND_NONE, tcod.CENTER, 
                         f'{name}: {value}/{maximum}')
 
-def render_all(god, con, panel, entities, player, game_map, fov_map, fov_recompute, msg_log):
+def render_all(god, con, panel, entities, player, game_map, fov_map, fov_recompute, msg_log, mouse):
     ''' 
     Draw all the tiles and entities in the game map, taking the console, all entities, game_map, screen vars and colors as input
     Starting to draw stats on the screen! Think carefully about this and change stuff acordingly, probably move the UI part into another file
@@ -45,32 +55,40 @@ def render_all(god, con, panel, entities, player, game_map, fov_map, fov_recompu
 
                 elif game_map.tiles[x][y].explored or god.sight:
                     if wall:
-                        tcod.console_set_char_background(con, x, y, colors.get('dark_wall'), tcod.BKGND_SET)
+                        tcod.console_set_char_background(con, x, y, colors['dark_wall'], tcod.BKGND_SET)
                     else:
-                        tcod.console_set_char_background(con, x, y, colors.get('dark_ground'), tcod.BKGND_SET)
+                        tcod.console_set_char_background(con, x, y, colors['dark_ground'], tcod.BKGND_SET)
 
                 else:# if god mode is turned off, it will make all non explored stuff turn black again
-                    tcod.console_set_char_background(con, x, y, colors.get('black'), tcod.BKGND_SET)
+                    tcod.console_set_char_background(con, x, y, colors['black'], tcod.BKGND_SET)
     
     entities_in_render_order = sorted(entities, key=lambda x: x.render_order.value)
 
     for entity in entities_in_render_order:
         draw_entity(god, con, entity, fov_map)
 
-    tcod.console_blit(con, 0, 0, const.get('screen_width'), const.get('screen_height'), 0, 0, 0)
+    tcod.console_set_default_foreground(con, tcod.white) 
 
     tcod.console_set_default_background(panel, tcod.black)
     tcod.console_clear(panel)
+
+    tcod.console_blit(con, 0, 0, const['screen_width'], const['screen_height'], 0, 0, 0)
 
     #print the game msgs, one line at a time
     y = 1
     for msg in msg_log.msgs:
         tcod.console_set_default_foreground(panel, msg.color)
         tcod.console_print_ex(panel, msg_log.x, y, tcod.BKGND_NONE, tcod.LEFT, msg.text)
+        y+=1
+
+
 
     render_bar(panel, 1, 1, const['bar_width'], 'HP', player.actor.hp, player.actor.max_hp, 
-                tcod.light_red, tcod.darker_red)
+                tcod.light_red, tcod.darker_red)  
 
+    tcod.console_set_default_foreground(panel, tcod.light_gray)
+    tcod.console_print_ex(panel, 1, 0, tcod.BKGND_NONE, tcod.LEFT,
+                            get_names_under_mouse(mouse, entities, fov_map))
     
     tcod.console_blit(panel, 0, 0, const['screen_width'], const['panel_height'], 0, 0, const['panel_y'])
 
@@ -100,9 +118,10 @@ def entity_in_fov(god, entity, fov_map):
 def clear_entity(con, entity):
     # erase the character that represents this object
     tcod.console_put_char(con, entity.x, entity.y, ' ', tcod.BKGND_NONE)
-
+'''
 def draw_text():
     tcod.console_print_ex(con, 5 , const['map_height']- 8, tcod.BKGND_NONE, tcod.LEFT,
                             'HP: {0:02}/{1:02}\nName: {2}\nMen: {3}, Phy: {4}, Spi: {5}\nAtk: {6}, Def: {7}, Spd: {8}'.format(
                             player.actor.hp, player.actor.max_hp, player.name, player.actor.mental, player.actor.physical, player.actor.spiritual,
-                            player.actor.atk_stat, player.actor.def_stat, player.actor.spd_stat))
+                            player.actor.atk_stat, player.actor.def_stat, player.actor.spd_stat
+'''
