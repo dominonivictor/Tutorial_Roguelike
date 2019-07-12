@@ -1,5 +1,6 @@
 import tcod
-
+from random import randint
+from interface.game_messages import Message
 
 class BasicCreature:
     '''
@@ -21,3 +22,27 @@ class BasicCreature:
                 results.extend(attack_results)
 
         return results
+
+class ConfusedMonster:
+    def __init__(self, prev_ai, turns_left=3):
+        self.prev_ai = prev_ai
+        self.turns_left = turns_left
+
+    def take_turn(self, target, fov_map, game_map, entities):
+        results = []
+
+        if self.turns_left >0:
+            random_x = self.owner.x + randint(0, 2) - 1
+            random_y = self.owner.y + randint(0, 2) - 1
+
+            if random_x != self.owner.x and random_y != self.owner.y:
+                self.owner.move_towards(random_x, random_y, game_map, entities)
+
+            self.turns_left -=1
+
+        else:
+            self.owner.ai = self.prev_ai
+            results.append({'message': Message(f'The {self.owner.name} is no longer confused', tcod.red)})
+
+        return results
+

@@ -8,10 +8,6 @@ class God:
 
 
     def toggle(self):
-        if self.tog:
-            self.sight = False
-            self.tog = False
-
-        else:
-            self.sight = True
-            self.tog = True
+        self.tog = not self.tog
+        self.sight = self.tog
+        self.invunerability = self.tog

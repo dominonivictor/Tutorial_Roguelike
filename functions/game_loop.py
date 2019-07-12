@@ -1,11 +1,12 @@
 import tcod
 
-from constants import get_game_constants, get_actors_stats
+from constants import get_game_constants, get_actors_stats, get_colors
 from game_states import GameStates
 from god import God
 from input_handlers import handle_keys
 from entity import Entity, get_blocking_entity
 from components.actor import Actor
+from components.inventory import Inventory
 from map_objects.game_map import GameMap
 from functions.fov import initialize_fov, recompute_fov, set_tile_fov, get_entities_in_fov
 from functions.death import kill_player, kill_creature 
@@ -15,6 +16,7 @@ from interface.game_messages import MessageLog
 
 const = get_game_constants()
 pstats = get_actors_stats()['player']
+colors = get_colors()
 '''
     make a game object to handle the stuff?? use to save important data?
 '''
@@ -46,7 +48,9 @@ def initialize_objs_vars():
     '''
     # OBJECTS
     actor_comp = Actor(mental=pstats['mental'], physical=pstats['physical'], spiritual=pstats['spiritual'])
-    player = Entity(0, 0, '@', tcod.white, 'Hero', blocks=True, render_order=RenderOrder.ACTOR, actor=actor_comp)
+    inventory_comp = Inventory(5)
+    player = Entity(0, 0, '@', colors['player'], 'Hero', blocks=True, render_order=RenderOrder.ACTOR,
+         actor=actor_comp, inventory=inventory_comp)
     entities = [player]
     god = God()
     game_map = GameMap(const.get('map_width'), const.get('map_height'))
@@ -54,11 +58,14 @@ def initialize_objs_vars():
 
     #Important vars
     game_state = GameStates.PLAYERS_TURN
+    prev_game_state = game_state
     fov_map = initialize_fov(game_map)
     key = tcod.Key()
     mouse = tcod.Mouse()
 
+    targeting_item = None
+
     #Message related stuff, in a near future, separate into combat, qests, chat, etc
     msg_log = MessageLog(const['message_x'], const['message_width'], const['message_height'])
 
-    return player, entities, god, game_map, game_state, fov_map, msg_log, key, mouse
+    return player, entities, god, game_map, game_state, prev_game_state, fov_map, msg_log, key, mouse, targeting_item

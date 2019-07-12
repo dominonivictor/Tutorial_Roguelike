@@ -3,7 +3,7 @@ from functions.game_loop import initialize_flags, initialize_objs_vars, initiali
 from constants import get_game_constants
 from game_states import GameStates
 from god import God
-from input_handlers import handle_keys
+from input_handlers import handle_keys, handle_mouse
 from entity import Entity, get_blocking_entity
 from components.actor import Actor
 from map_objects.game_map import GameMap
@@ -11,8 +11,10 @@ from functions.fov import initialize_fov, recompute_fov, set_tile_fov
 from functions.death import kill_player, kill_creature 
 from functions.render import RenderOrder
 
-from functions.pc_actions import break_wall_action, move_action, remap_action, debug_action, god_toggle_action, fire_action
- 
+from functions.pc_actions import (move_action, pickup_action, remap_action, debug_action, god_toggle_action,
+                                fire_action, wait_action, teleport_action, break_wall_action, create_wall_action,
+                                process_player_turn_results)
+from functions.interface_actions import show_inventory_action, inventory_index_action, drop_inventory_action
 
 class TheGame:
     '''
@@ -29,7 +31,7 @@ class TheGame:
 
         self.the_bug, self.fov_recompute = initialize_flags()
 
-        self.player, self.entities, self.god, self.game_map, self.game_state, self.fov_map, self.msg_log, self.key, self.mouse = initialize_objs_vars()
+        self.player, self.entities, self.god, self.game_map, self.game_state, self.prev_game_state, self.fov_map, self.msg_log, self.key, self.mouse, self.targeting_item = initialize_objs_vars()
 
     def check_event(self):
         '''
@@ -47,33 +49,85 @@ class TheGame:
         make the action execute
         Need to break this down even further, every action needs to be a separate func
         ''' 
-
-        action = handle_keys(self.key)
-
+        action = handle_keys(self.key, self.game_state)
+        mouse_action = handle_mouse(self.mouse)
         #PC COMMANDS
         move = action.get('move')
+        pickup = action.get('pickup')        
+        #MENUS STUFF
+        show_inventory = action.get('show_inventory')
+        drop_inventory = action.get('drop_inventory')
+        inventory_index = action.get('inventory_index')
+
+        #MOUSE
+        left_click = mouse_action.get('left_click')
+        right_click = mouse_action.get('right_click')
+
+        ########My personal actions""""""""""
+        wait = action.get('wait')
+        teleport = action.get('teleport')
         break_wall = action.get('break_wall')
+        create_wall = action.get('create_wall')
         fire = action.get('fire')
         player_turn_results = []
         #MASTERMIND COMMANDS
         god_toggle = action.get('god_toggle')
         remap = action.get('remap')
         debug = action.get('debug')
+        ############33    """"""""""""""""""""""""""""""""""""
         fullscreen = action.get('fullscreen')
         exit = action.get('exit')
 
     ################################################################################################################################################
         
-        #PLAYER ACTIONS
+
+
+
+        #PLAYER ACTIONS 1st from TUT then from Me
+        if move and self.game_state == GameStates.PLAYERS_TURN:
+            move_action(self, move)
+
+        if pickup and self.game_state == GameStates.PLAYERS_TURN:
+            pickup_action(self)
+        
+        if show_inventory:
+            show_inventory_action(self)
+
+        if drop_inventory:
+            drop_inventory_action(self)
+
+        if inventory_index is not None and self.prev_game_state != GameStates.PLAYER_DEAD and inventory_index < len(self.player.inventory.items):
+            inventory_index_action(self, inventory_index)
+
+        if self.game_state == GameStates.TARGETING_MODE:
+            if left_click:
+                target_x, target_y = left_click
+
+                item_use_results = self.player.inventory.use(self.targeting_item, entities=self.entities, fov_map=self.fov_map,
+                                                    target_x=target_x, target_y=target_y)
+                player_turn_results.extend(item_use_results)
+
+            elif right_click:
+                player_turn_results.append({'targeting_cancelled': True})
+
+            process_player_turn_results(self, player_turn_results)
+
+        ## CUSTOM MADE ACTIONS
         if break_wall:
             break_wall_action(self)
+
+        if create_wall:
+            create_wall_action(self)
 
         if fire:
             fire_action(self)
 
+        if teleport:
+            teleport_action(self)
 
-        if move and self.game_state == GameStates.PLAYERS_TURN:
-            move_action(self, move)
+        
+        if wait:
+            wait_action(self)
 
         #MASTERMIND ACTIONS
         if god_toggle:
@@ -86,12 +140,18 @@ class TheGame:
             debug_action(self)
 
 
+        #OUT OF GAME STUFF
         if fullscreen:
             tcod.console_set_fullscreen(not tcod.console_is_fullscreen())
 
         
         if exit:
-            return True
+            if self.game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
+                self.game_state = self.prev_game_state
+            elif self.game_state == GameStates.TARGETING_MODE:
+                player_turn_results.append({'targeting_cancelled': True})
+            else:
+                return True
 
 
     def enemy_action(self):

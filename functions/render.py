@@ -1,7 +1,22 @@
 import tcod
 from enum import Enum
 from constants import get_game_constants, get_colors
+from game_states import GameStates
+from interface.menus import inventory_menu
+'''
+if you somehow adjust the gui you might need to adjust that single function with new offset
+but just there
+you need a small function to convert mouse_x,mouse_y to map_x,map_y and use it for targeting, spells, wheree
 
+
+You subtract the mouse position by the offset.  This gets you the position on the map.
+
+This type of conversion is already being done by libtcod to get the screen tile from the mouse pixel.  You just need to add your own layer to get the map tile from the screen tile.
+If your map needs to scroll then you'd add the camera position as well, even if the offset was still 0,0.
+
+
+Layer is more of a programming term.  "SDL (layer)" -> "screen pixel" -> "libtcod (layer)" -> "screen tile" -> "your code (layer)" -> "map tile".
+'''
 const = get_game_constants()
 colors = get_colors()
 
@@ -10,11 +25,22 @@ class RenderOrder(Enum):
     ITEM = 2
     ACTOR = 3
 
-def get_names_under_mouse(mouse, entities, fov_map):
-    (x, y) = (mouse.cx, mouse.cy)
+def get_mouse_xy(mouse, offset=True):
+    if offset:
+        return (mouse.cx - const['map_x_offset'] , mouse.cy - const['map_y_offset'])
+    else:
+        return (mouse.cx, mouse.cy)
+        
+def get_entities_under_mouse(god, mouse, entities, fov_map):
+    (x, y) = (get_mouse_xy(mouse))
 
-    names = [entity.name for entity in entities
-                if entity.x == x and entity.y == y and tcod.map_is_in_fov(fov_map, entity.x, entity.y)]
+    entities_under_mouse = [entity for entity in entities
+                            if entity.x == x and entity.y == y and (tcod.map_is_in_fov(fov_map, x, y) or god.sight)]
+    return entities_under_mouse 
+
+def get_names_under_mouse(god, mouse, entities, fov_map):
+    names = [entity.name for entity in get_entities_under_mouse(god, mouse, entities, fov_map)]
+
     names = ', '.join(names)
 
     return names.capitalize()
@@ -34,7 +60,7 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
     tcod.console_print_ex(panel, int(x + total_width/2), y, tcod.BKGND_NONE, tcod.CENTER, 
                         f'{name}: {value}/{maximum}')
 
-def render_all(god, con, panel, entities, player, game_map, fov_map, fov_recompute, msg_log, mouse):
+def render_all(god, con, panel, entities, player, game_map, fov_map, fov_recompute, msg_log, mouse, game_state):
     ''' 
     Draw all the tiles and entities in the game map, taking the console, all entities, game_map, screen vars and colors as input
     Starting to draw stats on the screen! Think carefully about this and change stuff acordingly, probably move the UI part into another file
@@ -85,11 +111,24 @@ def render_all(god, con, panel, entities, player, game_map, fov_map, fov_recompu
 
     tcod.console_set_default_foreground(panel, tcod.light_gray)
     tcod.console_print_ex(panel, 1, 0, tcod.BKGND_NONE, tcod.LEFT,
-                            get_names_under_mouse(mouse, entities, fov_map))
-  
+                            get_names_under_mouse(god, mouse, entities, fov_map))
+    player = entities[0]
+    tcod.console_print_ex(panel, 1, 3, tcod.BKGND_NONE, tcod.LEFT,
+                            f'SPI = {player.actor.spiritual} DEF = {player.actor.def_stat}')
+    tcod.console_print_ex(panel, 1, 4, tcod.BKGND_NONE, tcod.LEFT,
+                            f'PHY = {player.actor.physical} SPD = {player.actor.spd_stat}')
+    tcod.console_print_ex(panel, 1, 5, tcod.BKGND_NONE, tcod.LEFT,
+                            f'MEN = {player.actor.mental} ATK = {player.actor.atk_stat}')
 
     tcod.console_blit(panel, 0, 0, const['screen_width'], const['panel_height'], 0, 0, 0)
     #tcod.console_set_default_foreground(con, tcod.white)
+
+    if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
+        if game_state == GameStates.SHOW_INVENTORY:
+            inventory_title = 'Press the key next to an item to use it, or Esc to cancel.\n'
+        elif game_state == GameStates.DROP_INVENTORY:
+            inventory_title = 'Press the key next to an item to drop it, or Esc to cancel.\n'
+        inventory_menu(con, inventory_title, player.inventory, 50)
 
 
 
@@ -105,7 +144,7 @@ def draw_entity(god, con, entity, fov_map):
 #change this to fov_functions ??
 def entity_in_fov(god, entity, fov_map):
     #**********************************************************************************
-    #I have another similar func in fov_functions, they are a little different, unite them both into 1 func
+    #I have another similar func in fov_functions, they are a little different, unite them both into 1 func??
     #**********************************************************************************
     if god.sight:
         return True

@@ -18,7 +18,7 @@ def main():
 
         render_console(con.console, pan.panel, the_game.god, the_game.player, the_game.entities, 
                     the_game.game_map, the_game.fov_map, the_game.fov_recompute,
-                    the_game.msg_log, the_game.mouse)
+                    the_game.msg_log, the_game.mouse, the_game.game_state)
 
         #This is very ugly and temporary, until i find out how to properly close the window
         exit = the_game.update()

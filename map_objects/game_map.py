@@ -1,3 +1,4 @@
+import tcod
 from random import randint, seed, choice
 from map_objects.tile import Tile
 from map_objects.shapes import Rect, Cross, Ellipse
@@ -5,7 +6,10 @@ from constants import get_room_constants, get_colors
 from entity import Entity
 from components.actor import Actor
 from components.ai import BasicCreature
+from components.item import Item
 from functions.render import RenderOrder
+from functions.item import heal, cast_lightning, cast_fireball, cast_confuse
+from interface.game_messages import Message
 
 const = get_room_constants()
 colors = get_colors()
@@ -121,6 +125,7 @@ class GameMap:
             and different items placed depending on stuff
             Not only placing "mobs" but also scenery stuff, flora, details and stuff
         '''
+        ########## CREATURESS ##############
         num_monsters = randint(0, const['max_monsters_per_room'])
 
         for i in range(num_monsters):
@@ -135,7 +140,7 @@ class GameMap:
                     actor_comp = Actor(mental=4, physical=10, spiritual=4)
                     ai_comp = BasicCreature()
 
-                    creature = Entity(x, y, 'o', colors['orc'], 'Orc', blocks=True, 
+                    creature = Entity(x, y, 'b', colors['bandit'], 'Bandit', blocks=True, 
                         render_order=RenderOrder.ACTOR, actor=actor_comp, ai=ai_comp)
                 else:
                     actor_comp = Actor(mental=6, physical=12, spiritual=6)
@@ -145,6 +150,39 @@ class GameMap:
 
                 entities.append(creature)
 
+        ############ ITEMSSSS ###############   
+        num_items = randint(0, const['max_items_per_room'])
+        
+        for i in range(num_items):
+
+            choicez = choice(room.tiles)
+            x = choicez[0]
+            y = choicez[1]
+
+            if not any([entity for entity in entities if entity.x == x and entity.y == y]):
+                item_chance = randint(0, 3)
+
+                if item_chance is 0:
+                    heal_pot = Item(use_function=heal, amount=4)
+                    item = Entity(x, y, '!', tcod.violet, 'Healing Potion', render_order=RenderOrder.ITEM,
+                                    item=heal_pot)
+                elif item_chance is 1:
+                    lightning = Item(use_function=cast_lightning, damage=20, maximum_range=5)
+                    item = Entity(x, y, '#', tcod.blue, 'Lightning Scroll', render_order=RenderOrder.ITEM,
+                                    item=lightning)
+                elif item_chance is 2:
+                    targeting_msg = Message('Left-click a tile to cast a 3x3 fireball, or right-click to cancel', tcod.cyan)
+                    fireball = Item(use_function=cast_fireball, targeting=True, targeting_message=targeting_msg,
+                                                                damage=12, radius=3)
+                    item = Entity(x, y, '#', tcod.red, 'Fireball Scroll', render_order=RenderOrder.ITEM,
+                                    item=fireball)
+                elif item_chance is 3:
+                    targeting_msg = Message('Left-click a Creature to cast Confusion, or right-click to cancel', tcod.cyan)                    
+                    confuse = Item(use_function=cast_confuse, targeting=True, targeting_message=targeting_msg)
+                    item = Entity(x, y, '#', tcod.light_green, 'Confusion Scroll', render_order=RenderOrder.ITEM,
+                                    item=confuse)
+                entities.append(item)
+        
     def is_blocked(self, x, y):
         if self.tiles[x][y].blocked:
             return True

@@ -21,9 +21,15 @@ class Tile:
         self.blocked = False
         self.block_sight = False
 
-'''
-    def transform_terrain(self, new_element):
-        self.tile_element = new_element
+    def create_wall(self):
+        self.blocked = True
+        self.block_sight = True
+
+    def move_tile(self):
         pass
-'''
+    '''
+        def transform_terrain(self, new_element):
+            self.tile_element = new_element
+            pass
+    '''
     
