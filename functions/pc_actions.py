@@ -21,14 +21,19 @@ def process_player_turn_results(the_game, player_turn_results):
         item_added = player_result.get('item_added')
         item_consumed = player_result.get('consumed')
         item_dropped = player_result.get('item_dropped')
+
+
         targeting = player_result.get('targeting')
         targeting_cancelled = player_result.get('targeting_cancelled')
+
+        targeting_skill = player_result.get('targeting_skill')
+
+        acted = player_result.get('acted')
 
         if message:
             the_game.msg_log.add_msg(message)
 
         if dead_entity:
-            print('killed')
             if dead_entity == the_game.player:
                 message, the_game.game_state = kill_player(dead_entity)
             else:
@@ -37,18 +42,15 @@ def process_player_turn_results(the_game, player_turn_results):
             the_game.msg_log.add_msg(message)
 
         if item_added:
-            print('added')
             the_game.entities.remove(item_added)
 
             the_game.game_state = GameStates.ENEMY_TURN
 
         if item_consumed:
-            print('item consumed')
             the_game.game_state = GameStates.ENEMY_TURN
 
 
         if item_dropped:
-            print('dropped')
             the_game.entities.append(item_dropped)
 
             the_game.game_state = GameStates.ENEMY_TURN
@@ -61,10 +63,21 @@ def process_player_turn_results(the_game, player_turn_results):
 
             the_game.msg_log.add_msg(the_game.targeting_item.item.targeting_message)
 
+        if targeting_skill:
+            the_game.prev_game_state = GameStates.PLAYERS_TURN
+            the_game.game_state = GameStates.TARGETING_MODE
+
+            the_game.targeting_skill = targeting_skill
+
+            the_game.msg_log.add_msg(the_game.targeting_skill.skill.targeting_message)
+
         if targeting_cancelled:
             the_game.game_state = the_game.prev_game_state
 
             the_game.msg_log.add_msg(Message('Targeting cancelled'))
+
+        if acted:
+            the_game.game_state = GameStates.ENEMY_TURN
 
 '''
 ################################################################################################################################
@@ -127,8 +140,6 @@ def break_wall_action(the_game):
 
     #break_results = the_game.player.actor.break_wall()
 
-def move_wall_action(the_game):
-    pass
 
 
 def teleport_action(the_game):
@@ -154,6 +165,7 @@ def teleport_action(the_game):
 def fire_action(the_game):
     '''
     This is repeating code, create a better attack func that covers both move and fire actions
+    Maybe create a range_attack for it to be used on entity.actor??
     '''
     player_turn_results = []
     entities_in_fov = get_entities_in_fov(the_game.fov_map, the_game.entities)
@@ -232,11 +244,15 @@ def move_action(the_game, move):
                 the_game.fov_recompute = True
 
             the_game.game_state = GameStates.ENEMY_TURN
+        else:
+            return {'fail': True}
     except IndexError:
         msg = {'message': Message('You cannot move there, it is forbbiden', tcod.orange)}
         player_turn_results.append(msg)
     #This basically processes all msgs
     process_player_turn_results(the_game, player_turn_results)
+
+    return {}
 
 def pickup_action(the_game):
     player_turn_results = []

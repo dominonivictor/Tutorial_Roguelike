@@ -14,7 +14,8 @@ from functions.render import RenderOrder
 from functions.pc_actions import (move_action, pickup_action, remap_action, debug_action, god_toggle_action,
                                 fire_action, wait_action, teleport_action, break_wall_action, create_wall_action,
                                 process_player_turn_results)
-from functions.interface_actions import show_inventory_action, inventory_index_action, drop_inventory_action
+from functions.interface_actions import (show_inventory_action, inventory_index_action, drop_inventory_action,
+                                            use_skill_action)
 
 class TheGame:
     '''
@@ -31,7 +32,7 @@ class TheGame:
 
         self.the_bug, self.fov_recompute = initialize_flags()
 
-        self.player, self.entities, self.god, self.game_map, self.game_state, self.prev_game_state, self.fov_map, self.msg_log, self.key, self.mouse, self.targeting_item = initialize_objs_vars()
+        self.player, self.entities, self.god, self.game_map, self.game_state, self.prev_game_state, self.fov_map, self.msg_log, self.key, self.mouse, self.targeting_item, self.targeting_skill = initialize_objs_vars()
 
     def check_event(self):
         '''
@@ -51,13 +52,21 @@ class TheGame:
         ''' 
         action = handle_keys(self.key, self.game_state)
         mouse_action = handle_mouse(self.mouse)
+        
         #PC COMMANDS
         move = action.get('move')
-        pickup = action.get('pickup')        
+        pickup = action.get('pickup')
+
         #MENUS STUFF
         show_inventory = action.get('show_inventory')
         drop_inventory = action.get('drop_inventory')
         inventory_index = action.get('inventory_index')
+
+        #SKILLS STUFF
+        break_wall = action.get('break_wall')
+        create_wall = action.get('create_wall')
+
+        skill_index = action.get('skill_index')
 
         #MOUSE
         left_click = mouse_action.get('left_click')
@@ -66,23 +75,19 @@ class TheGame:
         ########My personal actions""""""""""
         wait = action.get('wait')
         teleport = action.get('teleport')
-        break_wall = action.get('break_wall')
-        create_wall = action.get('create_wall')
         fire = action.get('fire')
         player_turn_results = []
+
         #MASTERMIND COMMANDS
         god_toggle = action.get('god_toggle')
         remap = action.get('remap')
         debug = action.get('debug')
-        ############33    """"""""""""""""""""""""""""""""""""
+        ############""""""""""""""""""""""""""""""""""""
         fullscreen = action.get('fullscreen')
         exit = action.get('exit')
 
     ################################################################################################################################################
         
-
-
-
         #PLAYER ACTIONS 1st from TUT then from Me
         if move and self.game_state == GameStates.PLAYERS_TURN:
             move_action(self, move)
@@ -99,26 +104,48 @@ class TheGame:
         if inventory_index is not None and self.prev_game_state != GameStates.PLAYER_DEAD and inventory_index < len(self.player.inventory.items):
             inventory_index_action(self, inventory_index)
 
+        if skill_index is not None:
+            use_skill_action(self, skill_index)
+
         if self.game_state == GameStates.TARGETING_MODE:
             if left_click:
                 target_x, target_y = left_click
+                #NEED TO CHECK IF IT IS targeting a skill or an item
+                if self.targeting_item:
+                    item_use_results = self.player.inventory.use(self.targeting_item, entities=self.entities, fov_map=self.fov_map,
+                                                        target_x=target_x, target_y=target_y)
+                    player_turn_results.extend(item_use_results)
+                
+                elif self.targeting_skill:
+                    if self.targeting_skill.skill.targeting_type is 'single':
+                        skill_use_results = self.player.knowledge.skill_forest.use_skill(self.targeting_skill,
+                                                         target_x=target_x, target_y=target_y, the_game=self)
+                        player_turn_results.extend(skill_use_results)
 
-                item_use_results = self.player.inventory.use(self.targeting_item, entities=self.entities, fov_map=self.fov_map,
-                                                    target_x=target_x, target_y=target_y)
-                player_turn_results.extend(item_use_results)
-
+                    elif self.targeting_skill.skill.targeting_type is 'multi' and not self.targeting_skill.skill.original_x:
+                        self.targeting_skill.skill.original_x = target_x
+                        self.targeting_skill.skill.original_y = target_y
+                    else:
+                        old_x = self.targeting_skill.skill.original_x
+                        old_y = self.targeting_skill.skill.original_y
+                        skill_use_results = self.player.knowledge.skill_forest.use_skill(self.targeting_skill,
+                                                         target_x=old_x, target_y=old_y, new_target_x=target_x, new_target_y=target_y, the_game=self)
+                        self.targeting_skill.skill.original_x = None
+                        self.targeting_skill.skill.original_y = None
+                        player_turn_results.extend(skill_use_results)
             elif right_click:
                 player_turn_results.append({'targeting_cancelled': True})
 
             process_player_turn_results(self, player_turn_results)
 
         ## CUSTOM MADE ACTIONS
+        '''
         if break_wall:
             break_wall_action(self)
 
         if create_wall:
             create_wall_action(self)
-
+        '''
         if fire:
             fire_action(self)
 

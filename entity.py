@@ -7,19 +7,23 @@ class Entity:
     """
     A generic object to represent players, enemies, items, etc.
     """
-    def __init__(self, x, y, char, color, name, blocks=False, render_order=RenderOrder.CORPSE, actor=None, ai=None,
-                item=None, inventory=None):
+    def __init__(self, x, y, char, color, name, **kwargs):
+        '''
+        kwargs accepts: Boolean/Number: blocks, render_order
+                        COMPONENTS: actor, ai, item, inventory, knowledge
+        '''
         self.x = x
         self.y = y
         self.char = char
         self.color = color
         self.name = name
-        self.blocks = blocks
-        self.render_order = render_order
-        self.actor = actor
-        self.ai = ai
-        self.item = item
-        self.inventory = inventory
+        self.blocks = kwargs.get('blocks')
+        self.render_order = kwargs.get('render_order')
+        self.actor = kwargs.get('actor')
+        self.ai = kwargs.get('ai')
+        self.item = kwargs.get('item')
+        self.inventory = kwargs.get('inventory')
+        self.knowledge = kwargs.get('knowledge')
 
         if self.actor:
             self.actor.owner = self
@@ -32,6 +36,9 @@ class Entity:
 
         if self.inventory:
             self.inventory.owner = self
+
+        if self.knowledge:
+            self.knowledge.owner = self
 
     def move(self, dx, dy):
         '''

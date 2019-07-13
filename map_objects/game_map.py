@@ -2,7 +2,7 @@ import tcod
 from random import randint, seed, choice
 from map_objects.tile import Tile
 from map_objects.shapes import Rect, Cross, Ellipse
-from constants import get_room_constants, get_colors
+from constants import get_room_constants, get_colors, get_item_parameters
 from entity import Entity
 from components.actor import Actor
 from components.ai import BasicCreature
@@ -13,6 +13,7 @@ from interface.game_messages import Message
 
 const = get_room_constants()
 colors = get_colors()
+item_par = get_item_parameters()
 
 class GameMap:
     '''
@@ -163,24 +164,21 @@ class GameMap:
                 item_chance = randint(0, 3)
 
                 if item_chance is 0:
-                    heal_pot = Item(use_function=heal, amount=4)
+                    heal_pot = Item(use_function=heal, **item_par['heal'])
                     item = Entity(x, y, '!', tcod.violet, 'Healing Potion', render_order=RenderOrder.ITEM,
                                     item=heal_pot)
                 elif item_chance is 1:
-                    lightning = Item(use_function=cast_lightning, damage=20, maximum_range=5)
+                    lightning = Item(use_function=cast_lightning, **item_par['lightning'])
                     item = Entity(x, y, '#', tcod.blue, 'Lightning Scroll', render_order=RenderOrder.ITEM,
                                     item=lightning)
                 elif item_chance is 2:
-                    targeting_msg = Message('Left-click a tile to cast a 3x3 fireball, or right-click to cancel', tcod.cyan)
-                    fireball = Item(use_function=cast_fireball, targeting=True, targeting_message=targeting_msg,
-                                                                damage=12, radius=3)
+                    fireball = Item(use_function=cast_fireball, **item_par['fireball'])
                     item = Entity(x, y, '#', tcod.red, 'Fireball Scroll', render_order=RenderOrder.ITEM,
                                     item=fireball)
-                elif item_chance is 3:
-                    targeting_msg = Message('Left-click a Creature to cast Confusion, or right-click to cancel', tcod.cyan)                    
-                    confuse = Item(use_function=cast_confuse, targeting=True, targeting_message=targeting_msg)
+                elif item_chance is 3:                   
+                    confusion = Item(use_function=cast_confuse, **item_par['confusion'])
                     item = Entity(x, y, '#', tcod.light_green, 'Confusion Scroll', render_order=RenderOrder.ITEM,
-                                    item=confuse)
+                                    item=confusion)
                 entities.append(item)
         
     def is_blocked(self, x, y):

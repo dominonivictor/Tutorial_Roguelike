@@ -1,30 +1,65 @@
 import tcod
 
+from interface.game_messages import Message
+
 def get_game_constants():
+
+    screen_width = 110
+    screen_height = 65
+    #MAP
+    map_width = 95
+    map_height = 58
+    #FOV
+    fov_algorithm = 0
+    fov_light_walls = True
+    fov_radius = 10
+
+    #PANEL
+    bar_width= 20
+    panel_height= 7
+    panel_y = screen_height - panel_height
+    #SIDEBAR
+    sidebar_width = screen_width - map_width
+    sidebar_height = screen_height - panel_height
+    sidebar_x = map_width + 1
+    sidebar_y = panel_height + 1
+
+    #MESSAGES
+    message_x = bar_width + 2
+    message_width = screen_width - bar_width - 2
+    message_height = panel_height - 1
+
+    #Offset for getting mouse input
+    map_x_offset = 0
+    map_y_offset = panel_height
 
     const = {
         #SCREEN
-        'screen_width' : 110,
-        'screen_height' : 65,
+        'screen_width': screen_width,
+        'screen_height': screen_height,
         #MAP
-        'map_width' : 95,
-        'map_height' : 58,
+        'map_width': map_width,
+        'map_height': map_height,
+        'map_x_offset': map_x_offset,
+        'map_y_offset': map_y_offset,
         #FOV
-        'fov_algorithm' : 0,
-        'fov_light_walls' : True,
-        'fov_radius' : 10,
+        'fov_algorithm': fov_algorithm,
+        'fov_light_walls': fov_light_walls,
+        'fov_radius': fov_radius,
         #PANEL
-        'bar_width': 20,
-        'panel_height': 7,
-
+        'bar_width': bar_width,
+        'panel_height': panel_height,
+        'panel_y': panel_y,
+        #SIDEBAR
+        'sidebar_width': sidebar_width,
+        'sidebar_height': sidebar_height,
+        'sidebar_x': sidebar_x,
+        'sidebar_y': sidebar_y,
+        #MESSAGES
+        'message_x': message_x,
+        'message_width': message_width,
+        'message_height': message_height,
     }
-    const['map_x_offset'] = 0
-    const['map_y_offset'] = const['panel_height']
-    const['panel_y'] = const['screen_height'] - const['panel_height']
-    #MESSAGES
-    const['message_x'] = const['bar_width'] + 2
-    const['message_width'] = const['screen_width'] - const['bar_width'] - 2
-    const['message_height'] = const['panel_height'] - 1
 
     return const
 
@@ -58,6 +93,8 @@ def get_colors():
 
     colors = {
 
+        'blink': tcod.Color(255, 71, 243),
+
         'dark_wall': tcod.Color(66, 47, 32),
         'dark_ground': tcod.Color(110, 78, 54),
         'light_wall' : tcod.Color(156, 97, 26), #darker orange
@@ -82,3 +119,17 @@ def get_actors_stats():
     }
 
     return stats
+
+def get_item_parameters():
+
+    parameters = {
+
+    'heal': {'amount': 4},
+    'lightning': {'damage': 20, 'maximum_range': 5},
+    'fireball': {'targeting': True, 'damage': 12, 'radius': 3,
+                'targeting_message': Message('Left-click a tile to cast a 3x3 fireball, or right-click to cancel', tcod.cyan)},
+    'confusion': {'targeting': True, 
+                'targeting_message':Message('Left-click a Creature to cast Confusion, or right-click to cancel', tcod.cyan)},
+    }
+
+    return parameters

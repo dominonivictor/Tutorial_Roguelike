@@ -12,6 +12,7 @@ from functions.fov import initialize_fov, recompute_fov, set_tile_fov, get_entit
 from functions.death import kill_player, kill_creature 
 from functions.render import RenderOrder
 from interface.game_messages import MessageLog
+from knowledge import Knowledge
 
 
 const = get_game_constants()
@@ -49,8 +50,9 @@ def initialize_objs_vars():
     # OBJECTS
     actor_comp = Actor(mental=pstats['mental'], physical=pstats['physical'], spiritual=pstats['spiritual'])
     inventory_comp = Inventory(5)
+    knowledge_comp = Knowledge()
     player = Entity(0, 0, '@', colors['player'], 'Hero', blocks=True, render_order=RenderOrder.ACTOR,
-         actor=actor_comp, inventory=inventory_comp)
+         actor=actor_comp, inventory=inventory_comp, knowledge=knowledge_comp)
     entities = [player]
     god = God()
     game_map = GameMap(const.get('map_width'), const.get('map_height'))
@@ -65,7 +67,9 @@ def initialize_objs_vars():
 
     targeting_item = None
 
+    targeting_skill = None
+
     #Message related stuff, in a near future, separate into combat, qests, chat, etc
     msg_log = MessageLog(const['message_x'], const['message_width'], const['message_height'])
 
-    return player, entities, god, game_map, game_state, prev_game_state, fov_map, msg_log, key, mouse, targeting_item
+    return player, entities, god, game_map, game_state, prev_game_state, fov_map, msg_log, key, mouse, targeting_item, targeting_skill

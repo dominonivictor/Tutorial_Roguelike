@@ -18,3 +18,19 @@ def inventory_index_action(the_game, inventory_index):
 def drop_inventory_action(the_game):
     the_game.prev_game_state = the_game.game_state
     the_game.game_state = GameStates.DROP_INVENTORY
+
+
+def use_skill_action(the_game, skill_index):
+    results = []
+
+    skill = the_game.player.knowledge.skill_forest.skills[skill_index]
+
+    results.extend(the_game.player.knowledge.skill_forest.use_skill(skill, the_game=the_game))
+
+    process_player_turn_results(the_game, results)
+
+
+#######################################################################################
+#In a near future implement other interface actions, such as show skills
+#skill_forest_index or smt like this
+#######################################################################################

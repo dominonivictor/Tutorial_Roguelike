@@ -57,32 +57,22 @@ def handle_pc_turn_keys(key):
         return {'show_inventory': True}
 
     #MY Personal actions
-    elif key.vk == tcod.KEY_KP5 or key_char == 'w':
+
+    if key.vk == tcod.KEY_KP5 or key_char == 'w':
         return {'wait': True}
 
     if key_char == 'f':
         return {'fire': True}
 
-    if key_char == 't':
-        return {'teleport': True}
-
     #Debug Stuff
-    if key_char == 'd':
+    if key_char == 'q':
         return {'debug': True}
-
-    if key_char == 'b':
-        return {'break_wall': True}
-
-    if key_char == 'c':
-        return {'create_wall': True}
 
     if key_char == 'r':
         return {'remap': True}
 
     if key_char == 'g':
         return {'god_toggle': True}
-
-
 
     #Other keys
     if key.vk == tcod.KEY_ENTER and key.lalt:
@@ -94,6 +84,24 @@ def handle_pc_turn_keys(key):
         return {'exit': True}
 
     # No key was pressed
+
+    '''
+    Hard coding this for now
+    '''
+
+    if key_char == 'c':
+        return {'skill_index': 0}
+
+    if key_char == 'b':
+        return {'skill_index': 1}
+
+    if key_char == 'm':
+        return {'skill_index': 2}
+
+    if key_char == 't':
+        return {'skill_index': 3}
+
+
     return {}
 
 def handle_inventory_keys(key):

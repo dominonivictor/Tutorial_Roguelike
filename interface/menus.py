@@ -3,8 +3,13 @@ from constants import get_game_constants
 
 const = get_game_constants()
 
-def menu(con, header, options, width, max_capacity=3):
-    if len(options) > max_capacity: raise ValueError('No more than 3.')
+def menu(con, header, options, width, max_capacity=6):
+    '''
+    OK this menu only shows up on the center of the screen and with some transparency...
+    also it only works for numeric values for the options...
+    '''
+
+    if len(options) > max_capacity: raise ValueError('No more than 6.')
 
     #Calculate total height for header
     header_height = tcod.console_get_height_rect(con, 0, 0, width, const['screen_height'], header)
@@ -39,3 +44,15 @@ def inventory_menu(con, header, inventory, inventory_width):
         options = [item.name for item in inventory.items]
 
     menu(con, header, options, inventory_width)
+
+
+'''
+Im not really making a new menu, im just creating another panel actually...
+'''
+def skills_menu(con, header, skill_forest, skill_forest_width):
+    if len(skill_forest.skills) == 0:
+        options = ['You have no skillz.']
+    else:
+        options = [skill.name for skill in skill_forest.skills]
+
+    menu(con, header, options, skill_forest_width)

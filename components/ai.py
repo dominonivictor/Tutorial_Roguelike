@@ -46,3 +46,20 @@ class ConfusedMonster:
 
         return results
 
+class RangedCreature:
+
+    def take_turn(self, target, fov_map, game_map, entities):
+        results = []
+        creature = self.owner
+
+        if tcod.map_is_in_fov(fov_map, creature.x, creature.y):
+            #if too close, run away
+            if distance_to(target)<=2:
+                creature.run_away(target, game_map)
+
+            #if near enough
+            elif distance_to(target) < creature.attack_range and target.actor.hp > 0:
+                attack_results = creature.actor.attack_target(target)
+                results.extend(attack_results)
+
+        return results

@@ -20,8 +20,8 @@ class Console:
 
         return con
 
-def render_console(con, panel, god, player, entities, game_map, fov_map, fov_recompute, msg_log, mouse, game_state):
-    render_all(god, con, panel, entities, player, game_map, fov_map, fov_recompute, msg_log, mouse, game_state)
+def render_console(con, panel, sidebar, god, player, entities, game_map, fov_map, fov_recompute, msg_log, mouse, game_state):
+    render_all(god, con, panel, sidebar, entities, player, game_map, fov_map, fov_recompute, msg_log, mouse, game_state)
 
     tcod.console_flush()
 
@@ -35,3 +35,12 @@ class Panel:
         panel = tcod.console_new(const['screen_width'], const['panel_height'])
         
         return panel
+
+class Sidebar:
+    def __init__(self):
+        self.sidebar = self.sidebar_init()
+
+    def sidebar_init(self):
+        sidebar = tcod.console_new(const['sidebar_width'], const['sidebar_height'])
+        
+        return sidebar
